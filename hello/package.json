@@ -1,0 +1,39 @@
+{
+  "name": "hello",
+  "keywords": [
+    "theia-extension"
+  ],
+  "version": "0.0.0",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "dependencies": {
+    "@theia/core": "1.68.2",
+    "@theia/monaco": "1.68.2"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "~5.4.5"
+  },
+  "scripts": {
+    "prepare": "npm run clean && npm run build",
+    "clean": "rimraf lib",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "theiaExtensions": [
+    {
+      "frontend": "lib/browser/hello-frontend-module"
+    }
+  ],
+"contributes": {
+  "languages": [
+    {
+      "id": "axm",
+      "aliases": ["Assamese"],
+      "extensions": [".axm"]
+    }
+  ]
+}
+}
