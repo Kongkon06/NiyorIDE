@@ -6,7 +6,8 @@
   "version": "0.0.0",
   "files": [
     "lib",
-    "src"
+    "src",
+    "files"
   ],
   "dependencies": {
     "@theia/core": "1.68.2",
@@ -24,7 +25,8 @@
   },
   "theiaExtensions": [
     {
-      "frontend": "lib/browser/hello-frontend-module"
+      "frontend": "lib/browser/hello-frontend-module",
+      "backend": "lib/node/luitPad-backend-module"
     }
   ],
 "contributes": {
