@@ -25,6 +25,47 @@ export class AssameseCompletionContribution implements FrontendApplicationContri
         extensions: ['.axm'],
         aliases: ['Assamese']
     });
+
+    monaco.languages.setMonarchTokensProvider("axm", {
+    defaultToken: '',
+    tokenPostfix: '.axm',
+    declarations: [
+      "চলক"
+    ],
+    functions: ["ফলন"],
+    class:[""],
+    control: ["যদি", "নহয়", "নহ'লে"],
+    literals: ["সঁচা", "মিছা"],
+    keywords: [
+      "নহ'লে", "বাবে", "যেতিয়ালৈকে", "কাৰ্য্য", "ঘূৰাই পঠিয়াওক",
+      "ছপা কৰক", "দিয়ক", "স্থিৰ", "শ্ৰেণী","বিষয়"
+    ],
+    tokenizer: {
+      root: [
+        [/(\/\/.*$)/, 'comment'],
+        [/"/, { token: 'string.quote', next: '@string' }],
+        [/\b\d+(\.\d+)?\b/, 'number'],
+
+        // 2. UPDATE your tokenizer to check these groups in order.
+        // We map them to new token types like 'keyword.declaration', 'keyword.function', etc.
+        [/[^\s]+/, {
+          cases: {
+            '@declarations': 'keyword.declaration',
+            '@functions': 'keyword.function',
+            '@control': 'keyword.control',
+            '@literals': 'keyword.literal',
+            '@default': 'identifier'
+          }
+        }]
+      ],
+      string: [
+        // (Your string tokenizer was perfect, no changes needed)
+        [/[^\\"]+/, 'string'],
+        [/\\./, 'string.escape'],
+        [/"/, { token: 'string.quote', next: '@pop' }]
+      ],
+    }
+  });
     monaco.languages.registerCompletionItemProvider('axm', {
 
    provideCompletionItems: async (model, position) => {
