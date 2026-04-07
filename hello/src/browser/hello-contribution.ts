@@ -32,7 +32,7 @@ export class AssameseCompletionContribution implements FrontendApplicationContri
     declarations: [
       "চলক"
     ],
-    functions: ["ফলন"],
+    functions: ["ফলন","প্ৰকাশ"],
     class:[""],
     control: ["যদি", "নহয়", "নহ'লে"],
     literals: ["সঁচা", "মিছা"],

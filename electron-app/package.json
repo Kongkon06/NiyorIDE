@@ -12,12 +12,12 @@
     "@theia/messages": "1.68.2",
     "@theia/monaco": "1.68.2",
     "@theia/navigator": "1.68.2",
+    "@theia/plugin-ext": "1.68.2",
+    "@theia/plugin-ext-vscode": "1.68.2",
     "@theia/preferences": "1.68.2",
     "@theia/process": "1.68.2",
     "@theia/terminal": "1.68.2",
     "@theia/workspace": "1.68.2",
-    "@theia/plugin-ext": "1.68.2",
-    "@theia/plugin-ext-vscode": "1.68.2",
     "hello": "0.0.0"
   },
   "devDependencies": {
@@ -32,5 +32,10 @@
   },
   "theia": {
     "target": "electron"
-  }
+  },
+"theiaPluginsDir": "plugins",
+"theiaPlugins": {
+  "vscode-builtin-javascript": "https://open-vsx.org/api/vscode/javascript-language-features/latest/file/vscode.javascript-language-features.vsix",
+  "vscode-builtin-typescript": "https://open-vsx.org/api/vscode/typescript-language-features/latest/file/vscode.typescript-language-features.vsix"
+}
 }

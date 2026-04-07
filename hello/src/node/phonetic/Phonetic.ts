@@ -37,17 +37,6 @@ export class Phonetic {
     return;
   }
 
-  static insertWordFromOutside(unicodeWord: string): boolean {
-    const charList: string[] = [];
-
-    const roman = Romanization.convert2Roman(Utilities.getUnicodeString(unicodeWord));
-    for (const c of roman) {
-      charList.push(Phonetic.phoneticEquivString(c));
-    }
-    Phonetic.insertWord(Phonetic.roman2UnicodeTreeDefault, charList, Utilities.getUnicodeString(unicodeWord));
-    return true;
-  }
-
   static addUserWord(roman: string, unicode: string) {
     if (Phonetic.userwords_phonetic_unicodexstr == null) {
       Phonetic.userwords_phonetic_unicodexstr = new Map();
@@ -396,7 +385,7 @@ export class Phonetic {
       );
     }
 
-    Phonetic.rankWords(localWords, newWord, 2);
+    Phonetic.rankWords(localWords, newWord, 4);
 
     let i = 0;
     for (const w of localWords) {
@@ -596,7 +585,6 @@ export class Phonetic {
       }
     }
 
-    // console.log("modified:", modified);
     return modified;
   }
 
