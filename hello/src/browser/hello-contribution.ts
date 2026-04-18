@@ -1,18 +1,51 @@
-import { injectable,inject } from '@theia/core/shared/inversify';
-import { ConnectionHandler, RpcConnectionHandler } from '@theia/core';
-import { WebSocketConnectionProvider } from '@theia/core/lib/browser';
+import { injectable, inject } from '@theia/core/shared/inversify';
+
 import { FrontendApplicationContribution } from '@theia/core/lib/browser';
+
+import {
+    CommandContribution,
+    CommandRegistry
+} from '@theia/core/lib/common/command';
+
+import {
+    MenuContribution,
+    MenuModelRegistry
+} from '@theia/core/lib/common/menu';
+
+import { CommonMenus } from '@theia/core/lib/browser/common-frontend-contribution';
+import { EditorManager } from '@theia/editor/lib/browser';
+
+import { WebSocketConnectionProvider } from '@theia/core/lib/browser';
 import * as monaco from '@theia/monaco-editor-core';
 import { AssameseService, AssamesePath } from '../common/luitPad-engine-protocol';
+import { AxmService, AxmPath } from '../common/axm-protocol';
+import {TerminalService } from '@theia/terminal/lib/browser/base/terminal-service';
+import { TerminalWidget } from '@theia/terminal/lib/browser/base/terminal-widget';
+
+export const RunAxmCommand = {
+    id: 'axm.run',
+    label: 'Run AXM File'
+};
 
 @injectable()
-export class AssameseCompletionContribution implements FrontendApplicationContribution {
+export class AssameseCompletionContribution implements 
+    FrontendApplicationContribution,
+    CommandContribution,
+    MenuContribution {
 
     private assameseService: AssameseService;
+    private axmService: AxmService;
+    private terminal: TerminalWidget | undefined;
 
     constructor(
         @inject(WebSocketConnectionProvider)
-        protected readonly connectionProvider: WebSocketConnectionProvider
+        protected readonly connectionProvider: WebSocketConnectionProvider,
+
+        @inject(EditorManager)
+        protected readonly editorManager: EditorManager,
+
+         @inject(TerminalService)
+        protected readonly terminalService: TerminalService
     ) {}
 
  async onStart(): Promise<void> {
@@ -92,5 +125,72 @@ export class AssameseCompletionContribution implements FrontendApplicationContri
                     }))
                 };
             }    });
-   }   
+   }; 
+
+registerCommands(commands: CommandRegistry): void {
+        commands.registerCommand(RunAxmCommand, {
+            execute: () => {
+                this.runCurrentFile();
+   
+            }
+        });
+    }
+
+registerMenus(menus: MenuModelRegistry): void {
+    menus.registerMenuAction(CommonMenus.EDIT, {  // or FILE
+        commandId: RunAxmCommand.id,
+        label: 'Run AXM File'
+    });
 }
+
+    private async getTerminal(): Promise<TerminalWidget> {
+    if (!this.terminal) {
+        this.terminal = await this.terminalService.newTerminal({
+            title: 'AXM Output'
+        });
+        this.terminal.start();
+        this.terminalService.open(this.terminal);
+    }
+    return this.terminal;
+    }
+
+   async runCurrentFile(): Promise<void> {
+    const editorWidget = this.editorManager.currentEditor;
+
+    if (!editorWidget) {
+        console.error("No active editor");
+        return;
+    }
+
+    if (!this.axmService) {
+        try {
+            this.axmService = await this.connectionProvider.createProxy<AxmService>(AxmPath);
+        } catch (e) {
+            console.error('Failed to create AxmService proxy', e);
+            return;
+        }
+    }
+
+    const uri = editorWidget.editor.uri;
+    let filePath = '';
+
+    if (uri) {
+        const p: any = uri.path;
+        filePath = (p && typeof p.fsPath === 'function') ? p.fsPath() : uri.toString();
+    }
+
+    const terminal = await this.getTerminal();
+
+try {
+    const output = await this.axmService.run(filePath);
+
+    console.log("AXM Output:", output);
+
+    terminal.write(`\r\n▶ Running: ${filePath}\r\n`);
+    terminal.write(output + '\r\n');
+
+} catch (err) {
+    terminal.write(`\r\n❌ Error: ${err}\r\n`);
+}
+}
+    }

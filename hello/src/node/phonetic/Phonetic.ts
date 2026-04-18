@@ -37,17 +37,6 @@ export class Phonetic {
     return;
   }
 
-  static addUserWord(roman: string, unicode: string) {
-    if (Phonetic.userwords_phonetic_unicodexstr == null) {
-      Phonetic.userwords_phonetic_unicodexstr = new Map();
-      Phonetic.userwords_unicodexstr_phonetic = new Map();
-    }
-    Phonetic.userwords_phonetic_unicodexstr.set(roman, unicode);
-    if (Phonetic.userwords_unicodexstr_phonetic != null)
-      Phonetic.userwords_unicodexstr_phonetic.set(unicode, roman);
-
-  }
-
   static insertWord(curNode: TreeNode, charList: string[], unicodeWord: string): void {
     // ✅ Base case: no more chars left → mark this node
     if (charList.length === 0) {
@@ -633,20 +622,6 @@ export class Phonetic {
 
     Phonetic.charPhoneticMap.set("j", "j");
     Phonetic.charPhoneticMap.set("z", "j");
-  }
-
-  static replaceChars(a: string): string {
-    if (!Phonetic.charPhoneticMap) {
-      throw new Error("charPhoneticMap not initialized. Call initializeCharPhoneticMap() first.");
-    }
-
-    let temp = a;
-    for (const [key, value] of Phonetic.charPhoneticMap.entries()) {
-      // replace globally, like QRegExp
-      const regex = new RegExp(key, "g");
-      temp = temp.replace(regex, value);
-    }
-    return temp;
   }
 
   static initializeDeleteCharMap(): void {

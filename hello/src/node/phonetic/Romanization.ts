@@ -254,14 +254,6 @@ export class Romanization {
     a.set("0x099f", "wo");
   }
 
-  compareUnicode(a:WordUnicode, b:WordUnicode): boolean {
-
-  if (a.unicode < b.unicode)
-    return true;
-  else
-    return false;
-  }
-
   Romanize(inputContent: string, roman2UnicodeMap: Map<string, string[]>): void {
     const lines = inputContent.split("\n");
 
@@ -323,16 +315,6 @@ export class Romanization {
     webPrintableWords.sort((a, b) => a.unicode.localeCompare(b.unicode));
   }
 
-  static isEndWithVowel(token:string): boolean {
-
-  let flag:boolean = false;
-  for (let i = 0; i < Romanization.vowels.length; i++) {
-    if (token.endsWith(Romanization.vowels[i])) {
-      flag = true;
-    }
-  }
-  return flag;
-  }
   static isVowelModifier(ch: string): boolean {
    let flag:boolean = false;
     for (let i = 0; i < Romanization.vMod.length;i++) {
