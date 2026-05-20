@@ -1,80 +1,57 @@
-# hello
-The example of how to build the Theia-based applications with the hello.
+# Niyor IDE
+
+Niyor IDE is an Eclipse Theia extension for the scripting language [Tupal](https://github.com/Kongkon06/Tupal) that provides Assamese word suggestions and localized typing assistance within the development environment.
+
+The Assamese suggestion engine used in this project is inspired by the work done in LuitPad by Kishori M. Konwar. Parts of the implementation were adapted and rewritten in TypeScript to integrate with the Eclipse Theia ecosystem and support the Tupal programming workflow.
+
+This project acknowledges and respects the original work released under the MIT License.
+
+Inspired by:
+- LuitPad — https://github.com/kishori82/LuitPad
+
+License reference:
+- Original work Copyright (c) 2020 Kishori M. Konwar
+- Licensed under the MIT License
+
 
 ## Getting started
 
-Please install all necessary [prerequisites](https://github.com/eclipse-theia/theia/blob/master/doc/Developing.md#prerequisites).
+Installing the repo
 
-## Running the browser example
+```
+git clone https://github.com/Kongkon06/NiyorIDE.git
+cd NiyorIDE
+npm install
 
-    npm run build:browser
-    npm run start:browser
+``` 
 
-*or:*
+### It is recommended to use yarn
 
-    npm run build:browser
-    cd browser-app
-    npm start
+```
+git clone https://github.com/Kongkon06/NiyorIDE.git
+cd NiyorIDE
+yarn install
 
-*or:* launch `Start Browser Backend` configuration from VS code.
+```
 
-Open http://localhost:3000 in the browser.
 
 ## Running the Electron example
 
-    npm run build:electron
-    npm run start:electron
+Before preparing the app, the extension is needed to be prepare
 
-*or:*
+```
+cd niyor
+yarn install
+yarn prepare
+cd  ..
 
-    npm run build:electron
-    cd electron-app
-    npm start
+```
 
-*or:* launch `Start Electron Backend` configuration from VS code.
+After preparing the extension the application can be build. The following commands will build and start the application.
 
+```
+yarn build:electron
+yarn start:electron
 
-## Developing with the browser example
+```
 
-Start watching all packages, including `browser-app`, of your application with
-
-    npm run watch:browser
-
-*or* watch only specific packages with
-
-    cd hello
-    npm run watch
-
-and the browser example.
-
-    cd browser-app
-    npm run watch
-
-Run the example as [described above](#Running-the-browser-example)
-## Developing with the Electron example
-
-Start watching all packages, including `electron-app`, of your application with
-
-    npm run watch:electron
-
-*or* watch only specific packages with
-
-    cd hello
-    npm run watch
-
-and the Electron example.
-
-    cd electron-app
-    npm run watch
-
-Run the example as [described above](#Running-the-Electron-example)
-
-## Publishing hello
-
-Create a npm user and login to the npm registry, [more on npm publishing](https://docs.npmjs.com/getting-started/publishing-npm-packages).
-
-    npm login
-
-Publish packages with lerna to update versions properly across local packages, [more on publishing with lerna](https://github.com/lerna/lerna#publish).
-
-    npx lerna publish
