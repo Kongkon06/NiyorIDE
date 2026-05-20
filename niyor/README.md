@@ -110,9 +110,3 @@
   - **Purpose:** Small utility used by UI to decide whether a string contains Assamese (used for tooltip logic).
 
 ---
-
-If you want, next I can:
-- Run a quick example: load the CSVs and call `AssameseEngine.suggest()` with sample inputs (need the files accessible), or
-- Produce a sequence diagram / Mermaid flowchart illustrating the exact method calls and data flow during `initialize()` and `suggest()`.
-
-Which would you like me to do next?
