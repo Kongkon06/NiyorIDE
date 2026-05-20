@@ -16,7 +16,7 @@
     "@theia/process": "1.68.2",
     "@theia/terminal": "1.68.2",
     "@theia/workspace": "1.68.2",
-    "hello": "0.0.0"
+    "niyor": "0.0.0"
   },
   "devDependencies": {
     "@theia/cli": "1.68.2"

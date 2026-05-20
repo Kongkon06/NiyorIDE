@@ -18,7 +18,7 @@
     "@theia/process": "1.68.2",
     "@theia/terminal": "1.68.2",
     "@theia/workspace": "1.68.2",
-    "hello": "0.0.0"
+    "niyor": "0.0.0"
   },
   "devDependencies": {
     "@theia/cli": "1.68.2",
@@ -33,9 +33,9 @@
   "theia": {
     "target": "electron"
   },
-"theiaPluginsDir": "plugins",
-"theiaPlugins": {
-  "vscode-builtin-javascript": "https://open-vsx.org/api/vscode/javascript-language-features/latest/file/vscode.javascript-language-features.vsix",
-  "vscode-builtin-typescript": "https://open-vsx.org/api/vscode/typescript-language-features/latest/file/vscode.typescript-language-features.vsix"
-}
+  "theiaPluginsDir": "plugins",
+  "theiaPlugins": {
+    "vscode-builtin-javascript": "https://open-vsx.org/api/vscode/javascript-language-features/latest/file/vscode.javascript-language-features.vsix",
+    "vscode-builtin-typescript": "https://open-vsx.org/api/vscode/typescript-language-features/latest/file/vscode.typescript-language-features.vsix"
+  }
 }

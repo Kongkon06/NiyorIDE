@@ -4283,7 +4283,7 @@ __metadata:
     "@theia/process": "npm:1.68.2"
     "@theia/terminal": "npm:1.68.2"
     "@theia/workspace": "npm:1.68.2"
-    hello: "npm:0.0.0"
+    niyor: "npm:0.0.0"
   languageName: unknown
   linkType: soft
 
@@ -5866,7 +5866,7 @@ __metadata:
     "@theia/terminal": "npm:1.68.2"
     "@theia/workspace": "npm:1.68.2"
     electron: "npm:38.4.0"
-    hello: "npm:0.0.0"
+    niyor: "npm:0.0.0"
   languageName: unknown
   linkType: soft
 
@@ -7351,20 +7351,6 @@ __metadata:
   checksum: 10c0/a27d478befe3c8192f006cdd0639a66798979dfa6e2125c6ac582a19a5ebfec62ad83e8382e6036170d873f46e4536a7e795bf8b95bf7c247f4cc0825ccc8c17
   languageName: node
   linkType: hard
-
-"hello@npm:0.0.0, hello@workspace:hello":
-  version: 0.0.0-use.local
-  resolution: "hello@workspace:hello"
-  dependencies:
-    "@theia/core": "npm:1.68.2"
-    "@theia/monaco": "npm:1.68.2"
-    "@theia/plugin-ext": "npm:1.68.2"
-    "@theia/plugin-ext-vscode": "npm:1.68.2"
-    "@theia/vsx-registry": "npm:1.68.2"
-    rimraf: "npm:^5.0.0"
-    typescript: "npm:~5.4.5"
-  languageName: unknown
-  linkType: soft
 
 "hono@npm:^4.11.4":
   version: 4.12.4
@@ -9503,6 +9489,20 @@ __metadata:
   checksum: 10c0/cafd28388e698e1138ace947929f842944d0f1c0b87d3fa2601a61b38dc89397d33c0ce2c8e7b99e968584b91d15f6810b91bef3f3826adf71b1833b61d4bf4f
   languageName: node
   linkType: hard
+
+"niyor@npm:0.0.0, niyor@workspace:niyor":
+  version: 0.0.0-use.local
+  resolution: "niyor@workspace:niyor"
+  dependencies:
+    "@theia/core": "npm:1.68.2"
+    "@theia/monaco": "npm:1.68.2"
+    "@theia/plugin-ext": "npm:1.68.2"
+    "@theia/plugin-ext-vscode": "npm:1.68.2"
+    "@theia/vsx-registry": "npm:1.68.2"
+    rimraf: "npm:^5.0.0"
+    typescript: "npm:~5.4.5"
+  languageName: unknown
+  linkType: soft
 
 "node-abi@npm:^3.3.0, node-abi@npm:^3.45.0":
   version: 3.87.0

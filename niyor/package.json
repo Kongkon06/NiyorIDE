@@ -1,5 +1,5 @@
 {
-  "name": "hello",
+  "name": "niyor",
   "keywords": [
     "theia-extension"
   ],
@@ -28,7 +28,7 @@
   },
   "theiaExtensions": [
     {
-      "frontend": "lib/browser/hello-frontend-module",
+      "frontend": "lib/browser/niyor-frontend-module",
       "backend": "lib/node/luitPad-backend-module"
     }
   ],
