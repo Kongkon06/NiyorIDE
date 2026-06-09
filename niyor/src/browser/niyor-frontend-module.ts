@@ -3,7 +3,7 @@ import { FrontendApplicationContribution } from '@theia/core/lib/browser';
 import { CommandContribution } from '@theia/core/lib/common/command';
 import { MenuContribution } from '@theia/core/lib/common/menu';
 
-import { AssameseCompletionContribution } from './hello-contribution';
+import { AssameseCompletionContribution } from './niyor-contribution';
 
 export default new ContainerModule(bind => {
     bind(FrontendApplicationContribution)
