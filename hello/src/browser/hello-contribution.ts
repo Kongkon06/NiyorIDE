@@ -3,19 +3,18 @@ import { HelloConsoleWidget } from './hello-widget';
 import { FrontendApplicationContribution, AbstractViewContribution } from '@theia/core/lib/browser';
 
 import {
-    Command,
     CommandContribution,
     CommandRegistry
 } from '@theia/core/lib/common/command';
 
 import {
     MenuContribution,
-    MenuModelRegistry
+    MenuModelRegistry,
+    MAIN_MENU_BAR
 } from '@theia/core/lib/common/menu';
 
-import { CommonMenus } from '@theia/core/lib/browser/common-frontend-contribution';
 import { EditorManager } from '@theia/editor/lib/browser';
-
+import { ApplicationShell } from '@theia/core/lib/browser';
 import { WebSocketConnectionProvider } from '@theia/core/lib/browser';
 import * as monaco from '@theia/monaco-editor-core';
 import { AssameseService, AssamesePath } from '../common/luitPad-engine-protocol';
@@ -23,15 +22,16 @@ import { AxmService, AxmPath } from '../common/axm-protocol';
 import { TerminalService } from '@theia/terminal/lib/browser/base/terminal-service';
 import { TerminalWidget } from '@theia/terminal/lib/browser/base/terminal-widget';
 
-export const RunAxmCommand = {
-    id: 'axm.run',
+export const RunAxmConsole = {
+    id: 'axm.console',
     label: 'Run AXM File'
 };
-
-export const HelloConsoleCommand: Command = {
-    id: 'helloConsole:command',
-    label: 'Toggle AXM Output'
+export const RunAxmTerminal = {
+    id: 'axm.terminal',
+    label: 'Run AXM in Terminal'
 };
+
+export const RUN_MENU = [...MAIN_MENU_BAR, '6_debug'];
 
 @injectable()
 export class HelloConsoleContribution extends AbstractViewContribution<HelloConsoleWidget> {
@@ -48,11 +48,9 @@ export class HelloConsoleContribution extends AbstractViewContribution<HelloCons
         super({
             widgetId: HelloConsoleWidget.ID,
             widgetName: HelloConsoleWidget.LABEL,
-            defaultWidgetOptions: { area: 'right' },
-            toggleCommandId: HelloConsoleCommand.id
+            defaultWidgetOptions: { area: 'main', mode: 'split-right' },
         });
     }
-
     /**
      * Example command registration to open the widget from the menu, and quick-open.
      * For a simpler use case, it is possible to simply call:
@@ -71,11 +69,6 @@ export class HelloConsoleContribution extends AbstractViewContribution<HelloCons
      *
      * @param commands
      */
-    registerCommands(commands: CommandRegistry): void {
-    commands.registerCommand(HelloConsoleCommand, {
-        execute: () => super.openView({ activate: true, reveal: true })
-    });
-}
 
     /**
      * Example menu registration to contribute a menu item used to open the widget.
@@ -118,6 +111,9 @@ export class AssameseCompletionContribution implements
 
         @inject(HelloConsoleContribution)
         protected readonly outputView: HelloConsoleContribution,
+
+        @inject(ApplicationShell)
+        protected readonly shell: ApplicationShell,
     ) { }
 
     async onStart(): Promise<void> {
@@ -143,7 +139,7 @@ export class AssameseCompletionContribution implements
             literals: ["সঁচা", "মিছা"],
             keywords: [
                 "নহ'লে", "বাবে", "যেতিয়ালৈকে", "কাৰ্য্য", "ঘূৰাই পঠিয়াওক",
-                "ছপা কৰক", "দিয়ক", "স্থিৰ", "শ্ৰেণী", "বিভাগ", "চলক", "ফলন", "প্ৰকাশ", "যদি", "নহয়", "সঁচা", "মিছা"
+                "দিয়ক", "স্থিৰ", "শ্ৰেণী", "বিভাগ", "চলক", "ফলন", "প্ৰকাশ", "যদি", "নহয়", "সঁচা", "মিছা"
             ],
             tokenizer: {
                 root: [
@@ -202,17 +198,28 @@ export class AssameseCompletionContribution implements
     };
 
     registerCommands(commands: CommandRegistry): void {
-        commands.registerCommand(RunAxmCommand, {
+        commands.registerCommand(RunAxmTerminal, {
             execute: () => {
-                this.runCurrentFile();
+                this.runCurrentFile("terminal");
+
+            }
+        });
+        commands.registerCommand(RunAxmConsole, {
+            execute: () => {
+                this.runCurrentFile("console");
 
             }
         });
     }
 
+
     registerMenus(menus: MenuModelRegistry): void {
-        menus.registerMenuAction(CommonMenus.EDIT, {  // or FILE
-            commandId: RunAxmCommand.id,
+        menus.registerMenuAction(RUN_MENU, {
+            commandId: RunAxmTerminal.id,
+            label: 'Run AXM in Terminal'
+        });
+        menus.registerMenuAction(RUN_MENU, {
+            commandId: RunAxmConsole.id,
             label: 'Run AXM File'
         });
     }
@@ -235,7 +242,7 @@ export class AssameseCompletionContribution implements
         return this.terminal;
     }
 
-    async runCurrentFile(): Promise<void> {
+    async runCurrentFile(mode: string): Promise<void> {
         const editorWidget = this.editorManager.currentEditor;
         const widget = await this.outputView.openView({
             reveal: true,
@@ -254,6 +261,14 @@ export class AssameseCompletionContribution implements
                 return;
             }
         }
+        if (editorWidget && widget.parent !== editorWidget.parent && mode == "console") {
+            this.shell.addWidget(widget, {
+                area: 'main',
+                mode: 'split-right',
+                ref: editorWidget
+            });
+            this.shell.activateWidget(widget.id);
+        }
 
         const uri = editorWidget.editor.uri;
         let filePath = '';
@@ -270,13 +285,20 @@ export class AssameseCompletionContribution implements
 
             console.log("AXM Output:", output);
             try {
-                terminal.write(`\r\n▶ Running: ${filePath}\r\n`);
-                terminal.write(output + '\r\n');
-                widget.info(`▶ Running: ${filePath}`);
-widget.append(output);
+                switch (mode) {
+                    case "terminal": {
+                        terminal.write(`\r\n▶ Running: ${filePath}\r\n`);
+                        terminal.write(output + '\r\n');
+                        break;
+                    }
+                    case "console": {
+                        widget.info(`▶ Running: ${filePath}`);
+                        widget.append(output);
+                        break;
+                    }
+                }
             } catch (e) {
-                console.error('Error processing AXM output', e);
-                widget.error(`❌ Error: ${e}`);
+                mode == "terminal" ? console.error('Error processing AXM output', e) : widget.error(`❌ Error: ${e}`);
             }
 
         } catch (err) {
