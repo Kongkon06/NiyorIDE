@@ -1,8 +1,9 @@
 import { injectable, inject } from '@theia/core/shared/inversify';
-
-import { FrontendApplicationContribution } from '@theia/core/lib/browser';
+import { HelloConsoleWidget } from './hello-widget';
+import { FrontendApplicationContribution, AbstractViewContribution } from '@theia/core/lib/browser';
 
 import {
+    Command,
     CommandContribution,
     CommandRegistry
 } from '@theia/core/lib/common/command';
@@ -27,6 +28,74 @@ export const RunAxmCommand = {
     label: 'Run AXM File'
 };
 
+export const HelloConsoleCommand: Command = {
+    id: 'helloConsole:command',
+    label: 'Toggle AXM Output'
+};
+
+@injectable()
+export class HelloConsoleContribution extends AbstractViewContribution<HelloConsoleWidget> {
+
+    /**
+     * `AbstractViewContribution` handles the creation and registering
+     *  of the widget including commands, menus, and keybindings.
+     * 
+     * We can pass `defaultWidgetOptions` which define widget properties such as 
+     * its location `area` (`main`, `left`, `right`, `bottom`), `mode`, and `ref`.
+     * 
+     */
+    constructor() {
+        super({
+            widgetId: HelloConsoleWidget.ID,
+            widgetName: HelloConsoleWidget.LABEL,
+            defaultWidgetOptions: { area: 'right' },
+            toggleCommandId: HelloConsoleCommand.id
+        });
+    }
+
+    /**
+     * Example command registration to open the widget from the menu, and quick-open.
+     * For a simpler use case, it is possible to simply call:
+     ```ts
+        super.registerCommands(commands)
+     ```
+     *
+     * For more flexibility, we can pass `OpenViewArguments` which define 
+     * options on how to handle opening the widget:
+     * 
+     ```ts
+        toggle?: boolean
+        activate?: boolean;
+        reveal?: boolean;
+     ```
+     *
+     * @param commands
+     */
+    registerCommands(commands: CommandRegistry): void {
+    commands.registerCommand(HelloConsoleCommand, {
+        execute: () => super.openView({ activate: true, reveal: true })
+    });
+}
+
+    /**
+     * Example menu registration to contribute a menu item used to open the widget.
+     * Default location when extending the `AbstractViewContribution` is the `View` main-menu item.
+     * 
+     * We can however define new menu path locations in the following way:
+     ```ts
+        menus.registerMenuAction(CommonMenus.HELP, {
+            commandId: 'id',
+            label: 'label'
+        });
+     ```
+     * 
+     * @param menus
+     */
+    registerMenus(menus: MenuModelRegistry): void {
+        super.registerMenus(menus);
+    }
+}
+
 @injectable()
 export class AssameseCompletionContribution implements
     FrontendApplicationContribution,
@@ -45,7 +114,10 @@ export class AssameseCompletionContribution implements
         protected readonly editorManager: EditorManager,
 
         @inject(TerminalService)
-        protected readonly terminalService: TerminalService
+        protected readonly terminalService: TerminalService,
+
+        @inject(HelloConsoleContribution)
+        protected readonly outputView: HelloConsoleContribution,
     ) { }
 
     async onStart(): Promise<void> {
@@ -149,7 +221,6 @@ export class AssameseCompletionContribution implements
         if (!this.terminal || this.terminal.isDisposed) {
             this.terminal = await this.terminalService.newTerminal({
                 title: 'AXM Output',
-                 shellPath: 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe'
             });
 
             this.terminal.start();
@@ -166,7 +237,10 @@ export class AssameseCompletionContribution implements
 
     async runCurrentFile(): Promise<void> {
         const editorWidget = this.editorManager.currentEditor;
-
+        const widget = await this.outputView.openView({
+            reveal: true,
+            activate: true
+        });
         if (!editorWidget) {
             console.error("No active editor");
             return;
@@ -198,8 +272,11 @@ export class AssameseCompletionContribution implements
             try {
                 terminal.write(`\r\n▶ Running: ${filePath}\r\n`);
                 terminal.write(output + '\r\n');
+                widget.info(`▶ Running: ${filePath}`);
+widget.append(output);
             } catch (e) {
                 console.error('Error processing AXM output', e);
+                widget.error(`❌ Error: ${e}`);
             }
 
         } catch (err) {

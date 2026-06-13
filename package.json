@@ -17,8 +17,11 @@
   "devDependencies": {
     "lerna": "2.4.0"
   },
+  "resolutions": {
+    "@vscode/ripgrep": "1.15.9"
+  },
   "workspaces": [
-    "niyor",
+    "hello",
     "browser-app",
     "electron-app"
   ],

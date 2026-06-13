@@ -1,0 +1,112 @@
+.axm-console-widget {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.axm-console-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-family: var(--theia-ui-font-family, sans-serif);
+}
+
+.axm-console-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 8px;
+    border-bottom: 1px solid var(--theia-editorGroupHeader-tabsBorder, #444);
+    background: var(--theia-editorGroupHeader-tabsBackground, #252526);
+    flex-shrink: 0;
+}
+
+.axm-console-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--theia-foreground, #ccc);
+    opacity: 0.8;
+}
+
+.axm-console-clear-btn {
+    background: transparent;
+    border: 1px solid var(--theia-button-border, #555);
+    color: var(--theia-foreground, #ccc);
+    border-radius: 3px;
+    font-size: 11px;
+    padding: 2px 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.axm-console-clear-btn:hover {
+    background: var(--theia-list-hoverBackground, #2a2d2e);
+}
+
+.axm-console {
+    flex: 1;
+    overflow-y: auto;
+    padding: 6px 10px;
+    font-family: var(--theia-code-font-family, 'Courier New', monospace);
+    font-size: 13px;
+    line-height: 1.5;
+    background: var(--theia-editor-background, #1e1e1e);
+    color: var(--theia-editor-foreground, #d4d4d4);
+    outline: none;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.axm-console-placeholder {
+    color: var(--theia-descriptionForeground, #888);
+    font-style: italic;
+    font-family: var(--theia-ui-font-family, sans-serif);
+    padding: 8px 0;
+}
+
+.axm-console-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 1px 0;
+}
+
+.axm-console-timestamp {
+    color: var(--theia-descriptionForeground, #6a6a6a);
+    font-size: 11px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    user-select: none;
+}
+
+.axm-console-text {
+    flex: 1;
+    /* Ensures Assamese unicode renders cleanly with proper line height */
+    font-family: 'Noto Sans Bengali', 'Noto Sans', var(--theia-code-font-family, monospace);
+}
+
+.axm-console-line-normal .axm-console-text {
+    color: var(--theia-editor-foreground, #d4d4d4);
+}
+
+.axm-console-line-error .axm-console-text {
+    color: var(--theia-errorForeground, #f48771);
+}
+
+.axm-console-line-info .axm-console-text {
+    color: var(--theia-textLink-foreground, #3794ff);
+    font-style: italic;
+}
+
+.axm-console-line-command .axm-console-text {
+    color: var(--theia-terminal-ansiGreen, #89d185);
+    font-weight: 600;
+}
+
+.axm-console-line-command .axm-console-text::before {
+    content: "❯ ";
+}
