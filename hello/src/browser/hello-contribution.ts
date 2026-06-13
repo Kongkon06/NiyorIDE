@@ -243,25 +243,34 @@ export class AssameseCompletionContribution implements
     }
 
     async runCurrentFile(mode: string): Promise<void> {
-        const editorWidget = this.editorManager.currentEditor;
-        const widget = await this.outputView.openView({
-            reveal: true,
-            activate: true
-        });
-        if (!editorWidget) {
-            console.error("No active editor");
+    const editorWidget = this.editorManager.currentEditor;
+    if (!editorWidget) {
+        console.error("No active editor");
+        return;
+    }
+
+    if (!this.axmService) {
+        try {
+            this.axmService = await this.connectionProvider.createProxy<AxmService>(AxmPath);
+        } catch (e) {
+            console.error('Failed to create AxmService proxy', e);
             return;
         }
+    }
 
-        if (!this.axmService) {
-            try {
-                this.axmService = await this.connectionProvider.createProxy<AxmService>(AxmPath);
-            } catch (e) {
-                console.error('Failed to create AxmService proxy', e);
-                return;
-            }
-        }
-        if (editorWidget && widget.parent !== editorWidget.parent && mode == "console") {
+    const uri = editorWidget.editor.uri;
+    let filePath = '';
+    if (uri) {
+        const p: any = uri.path;
+        filePath = (p && typeof p.fsPath === 'function') ? p.fsPath() : uri.toString();
+    }
+
+    let widget: HelloConsoleWidget | undefined;
+    let terminal: TerminalWidget | undefined;
+
+    if (mode === "console") {
+        widget = await this.outputView.openView({ reveal: true, activate: true });
+        if (widget.parent !== editorWidget.parent) {
             this.shell.addWidget(widget, {
                 area: 'main',
                 mode: 'split-right',
@@ -269,40 +278,27 @@ export class AssameseCompletionContribution implements
             });
             this.shell.activateWidget(widget.id);
         }
+    } else {
+        terminal = await this.getTerminal();
+    }
 
-        const uri = editorWidget.editor.uri;
-        let filePath = '';
+    try {
+        const output = await this.axmService.run(filePath);
+        console.log("AXM Output:", output);
 
-        if (uri) {
-            const p: any = uri.path;
-            filePath = (p && typeof p.fsPath === 'function') ? p.fsPath() : uri.toString();
+        if (mode === "terminal" && terminal) {
+            terminal.write(`\r\n▶ Running: ${filePath}\r\n`);
+            terminal.write(output + '\r\n');
+        } else if (mode === "console" && widget) {
+            widget.info(`▶ Running: ${filePath}`);
+            widget.append(output);
         }
-
-        const terminal = await this.getTerminal();
-
-        try {
-            const output = await this.axmService.run(filePath);
-
-            console.log("AXM Output:", output);
-            try {
-                switch (mode) {
-                    case "terminal": {
-                        terminal.write(`\r\n▶ Running: ${filePath}\r\n`);
-                        terminal.write(output + '\r\n');
-                        break;
-                    }
-                    case "console": {
-                        widget.info(`▶ Running: ${filePath}`);
-                        widget.append(output);
-                        break;
-                    }
-                }
-            } catch (e) {
-                mode == "terminal" ? console.error('Error processing AXM output', e) : widget.error(`❌ Error: ${e}`);
-            }
-
-        } catch (err) {
+    } catch (err) {
+        if (mode === "terminal" && terminal) {
             terminal.write(`\r\n❌ Error: ${err}\r\n`);
+        } else if (mode === "console" && widget) {
+            widget.error(`❌ Error: ${err}`);
         }
     }
+}
 }
